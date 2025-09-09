@@ -3,7 +3,9 @@ import cors from "cors";
 import fs from "fs";
 
 const app = express();
-const PORT = 3000;
+app.use(express.json());
+app.use(cors());
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 let messages = [];
@@ -15,9 +17,12 @@ app.get("/messages", (req, res) => {
 
 // POST a new message
 app.post("/messages", (req, res) => {
-  const { user, text } = req.body;
-  if (!user || !text) {
-    return res.status(400).json({ error: "User and text are required" });
+  let { user, text } = req.body;
+  if (!user || user.trim() === "") {
+    user = "Anonymous";
+  }
+  if (!text || text.trim() === "") {
+    return res.status(400).json({ error: "Message is required" });
   }
   const message = { user, text, time: new Date().toISOString() };
   messages.push(message);
