@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import fs from "fs";
 
 const app = express();
 app.use(express.json());
@@ -9,10 +8,28 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 let messages = [];
+let waitingClients = []; // store waiting get requests for long polling
 
 // GET all messages
 app.get("/messages", (req, res) => {
-  res.json(messages);
+  //optionally allow client to ask since last message time
+  const since = req.query.since ? new Date(req.query.since) : null;
+  let newMessages = messages;
+  if (since) {
+    newMessages = messages.filter((msg) => new Date(msg.time) > since);
+  }
+  if (newMessages.length === 0) {
+    waitingClients.push(res);
+    setTimeout(() => {
+      const index = waitingClients.indexOf(res);
+      if (index !== -1) {
+        waitingClients.splice(index, 1);
+        res.json([]); //send empty array
+      }
+    }, 30000);
+  } else {
+    res.json(newMessages);
+  }
 });
 
 // POST a new message
@@ -27,6 +44,12 @@ app.post("/messages", (req, res) => {
   const message = { user, text, time: new Date().toISOString() };
   messages.push(message);
   res.status(201).json(message);
+
+  //notify all waiting clients
+  while (waitingClients.length > 0) {
+    const clientRes = waitingClients.pop();
+    clientRes.json([message]);
+  }
 });
 
 app.listen(PORT, () => {
