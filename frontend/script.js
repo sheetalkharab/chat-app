@@ -17,11 +17,12 @@ async function loadMessages() {
     messagesDiv.innerHTML = ""; // reset
 
     data.forEach((msg) => {
-      const p = document.createElement("p");
-      p.innerText = `${msg.user}: ${msg.text} (${new Date(
+      const div = document.createElement("div");
+      div.classList.add("message");
+      div.innerText = `${msg.user}: ${msg.text} (${new Date(
         msg.time
       ).toLocaleTimeString()})`;
-      messagesDiv.appendChild(p);
+      messagesDiv.appendChild(div);
 
       lastMessageTime = msg.time; // update last seen time
     });
