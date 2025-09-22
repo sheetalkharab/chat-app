@@ -14,7 +14,7 @@ async function loadMessages() {
       : backendURL;
     const res = await fetch(url);
     const data = await res.json();
-    messagesDiv.innerHTML = ""; // reset
+    //messagesDiv.innerHTML = ""; // reset
 
     data.forEach((msg) => {
       const div = document.createElement("div");
