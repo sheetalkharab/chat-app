@@ -75,7 +75,7 @@ button#enter:hover {
 
 /* Individual messages */
 .message {
-  display: inline-block;
+  display: block;
   padding: 8px 12px;
   border-radius: 15px;
   word-wrap: break-word;
@@ -83,18 +83,5 @@ button#enter:hover {
   max-width: 60%;
   margin-bottom: 10px;
   clear: both;
-}
-
-.message.user {
-  background-color: #dcf8c6;
-  border-bottom-right-radius: 0;
-  float: right;
-}
-
-/* Messages from other users (Tom in screenshot) */
-.message.other {
-  background-color: #fff;
-  border-bottom-left-radius: 0;
-  float: left;
-  border: 1px solid #eee;
+  background-color: #e3e0fa;
 }
