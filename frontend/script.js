@@ -1,7 +1,7 @@
 const userName = document.getElementById("userName");
 const newMessage = document.getElementById("newMessage");
 const messagesDiv = document.getElementById("messages");
-//const backendURL = "http://localhost:3000/messages";
+
 const backendURL =
   "https://sheetalkharab-chatapp-backend.hosting.codeyourfuture.io/messages";
 // Track last message timestamp
