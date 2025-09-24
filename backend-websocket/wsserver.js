@@ -1,0 +1,64 @@
+import express from "express";
+import cors from "cors";
+import http from "http";
+import { server as WebSocketServer } from "websocket";
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(app);
+const webSocketServer = new WebSocketServer({ httpServer: server });
+
+let messages = [];
+let clients = [];
+//websocket connection
+webSocketServer.on("request", (request) => {
+  const connection = request.accept(null, request.origin);
+  clients.push(connection);
+
+  //if existing message send to new client
+  connection.sendUTF(JSON.stringify({ command: "all-messages", messages }));
+  connection.on("message", (message) => {
+    const data = JSON.parse(message.utf8Data);
+    if (data.command === "send-message") {
+      const msg = {
+        user: data.message.user || "Anonymous",
+        text: data.message.text,
+        time: new Date().toISOString(),
+      };
+      messages.push(msg);
+      //broadcast to all clients
+      clients.forEach((client) =>
+        client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
+      );
+    }
+  });
+  connection.on("close", () => {
+    clients = clients.filter((c) => c !== connection);
+  });
+});
+
+// Optional fallback: keep REST POST for testing
+app.post("/messages", (req, res) => {
+  const { user, text } = req.body;
+  if (!text) return res.status(400).json({ error: "Message required" });
+
+  const msg = {
+    user: user || "Anonymous",
+    text,
+    time: new Date().toISOString(),
+  };
+  messages.push(msg);
+
+  clients.forEach((client) =>
+    client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
+  );
+
+  res.status(201).json(msg);
+});
+
+server.listen(PORT, () => {
+  console.log(`WebSocket backend running on port ${PORT}`);
+});

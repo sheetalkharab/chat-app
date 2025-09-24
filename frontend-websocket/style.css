@@ -1,0 +1,87 @@
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Main heading */
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+/* Input fields and button container */
+#userName,
+#newMessage {
+  flex: 1;
+  width: 250px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#inputRow {
+  display: flex;
+  gap: 20px; /* spacing between inputs and button */
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px; /* adjust as needed */
+}
+
+/* Inputs styling */
+#userName,
+#newMessage {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  flex: 1; /* inputs take available space */
+}
+
+button#enter {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  max-width: 300px;
+}
+
+button#enter:hover {
+  background-color: #45a049;
+}
+
+/* Messages container */
+#messages {
+  width: 500px;
+  min-height: 300px;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual messages */
+.message {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 15px;
+  word-wrap: break-word;
+  font-size: 14px;
+  max-width: 60%;
+  margin-bottom: 10px;
+  clear: both;
+  background-color: #e3e0fa;
+}
