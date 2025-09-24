@@ -27,12 +27,46 @@ webSocketServer.on("request", (request) => {
         user: data.message.user || "Anonymous",
         text: data.message.text,
         time: new Date().toISOString(),
+        likes: 0,
+        dislikes: 0,
       };
       messages.push(msg);
       //broadcast to all clients
       clients.forEach((client) =>
         client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
       );
+    }
+    //to like a message
+    if (data.command === "like-message") {
+      const index = data.index;
+      if (messages[index]) {
+        messages[index].likes += 1;
+        clients.forEach((client) =>
+          client.sendUTF(
+            JSON.stringify({
+              command: "update-message",
+              message: messages[index],
+              index,
+            })
+          )
+        );
+      }
+    }
+    //to dislike a message
+    if (data.command === "dislike-message") {
+      const index = data.index;
+      if (messages[index]) {
+        messages[index].dislikes += 1;
+        clients.forEach((client) =>
+          client.sendUTF(
+            JSON.stringify({
+              command: "update-message",
+              message: messages[index],
+              index,
+            })
+          )
+        );
+      }
     }
   });
   connection.on("close", () => {
@@ -41,23 +75,23 @@ webSocketServer.on("request", (request) => {
 });
 
 // Optional fallback: keep REST POST for testing
-app.post("/messages", (req, res) => {
-  const { user, text } = req.body;
-  if (!text) return res.status(400).json({ error: "Message required" });
+// app.post("/messages", (req, res) => {
+//   const { user, text } = req.body;
+//   if (!text) return res.status(400).json({ error: "Message required" });
 
-  const msg = {
-    user: user || "Anonymous",
-    text,
-    time: new Date().toISOString(),
-  };
-  messages.push(msg);
+//   const msg = {
+//     user: user || "Anonymous",
+//     text,
+//     time: new Date().toISOString(),
+//   };
+//   messages.push(msg);
 
-  clients.forEach((client) =>
-    client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
-  );
+//   clients.forEach((client) =>
+//     client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
+//   );
 
-  res.status(201).json(msg);
-});
+//   res.status(201).json(msg);
+// });
 
 server.listen(PORT, () => {
   console.log(`WebSocket backend running on port ${PORT}`);
