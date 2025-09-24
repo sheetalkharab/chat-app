@@ -13,19 +13,40 @@ ws.onmessage = (event) => {
 
   if (data.command === "all-messages") {
     messagesDiv.innerHTML = "";
-    data.messages.forEach(renderMessage);
+    data.messages.forEach((msg, i) => renderMessage(msg, i));
   }
   if (data.command === "new-message") {
-    renderMessage(data.message);
+    renderMessage(data.message, data.index || messagesDiv.children.length);
+  }
+
+  if (data.command === "update-message") {
+    const { message, index } = data;
+    const messageDiv = messagesDiv.children[index];
+    if (messageDiv) {
+      // update counts inside existing div
+      messageDiv.querySelector(".like-count").textContent = message.likes;
+      messageDiv.querySelector(".dislike-count").textContent = message.dislikes;
+    }
   }
 };
+function likeMessage(index) {
+  ws.send(JSON.stringify({ command: "like-message", index }));
+}
 
-function renderMessage(msg) {
+function dislikeMessage(index) {
+  ws.send(JSON.stringify({ command: "dislike-message", index }));
+}
+
+function renderMessage(msg, index) {
   const div = document.createElement("div");
   div.classList.add("message");
-  div.innerText = `${msg.user}: ${msg.text} (${new Date(
+  div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text} <small>(${new Date(
     msg.time
-  ).toLocaleTimeString()})`;
+  ).toLocaleTimeString()})</small><br>
+    👍 <span class="like-count">${msg.likes || 0}</span>
+    <button onclick="likeMessage(${index})">Like</button>
+    👎 <span class="dislike-count">${msg.dislikes || 0}</span>
+    <button onclick="dislikeMessage(${index})">Dislike</button>`;
   messagesDiv.appendChild(div);
 
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
