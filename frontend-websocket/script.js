@@ -3,7 +3,9 @@ const newMessage = document.getElementById("newMessage");
 const messagesDiv = document.getElementById("messages");
 const sendBtn = document.getElementById("enter");
 
-const ws = new WebSocket("ws://localhost:3000");
+const ws = new WebSocket(
+  "wss://sheetalkharab-websocketchatapp.hosting.codeyourfuture.io"
+);
 ws.onopen = () => {
   console.log("connected to webSocket server");
 };
