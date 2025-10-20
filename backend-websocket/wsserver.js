@@ -74,24 +74,9 @@ webSocketServer.on("request", (request) => {
   });
 });
 
-// Optional fallback: keep REST POST for testing
-// app.post("/messages", (req, res) => {
-//   const { user, text } = req.body;
-//   if (!text) return res.status(400).json({ error: "Message required" });
-
-//   const msg = {
-//     user: user || "Anonymous",
-//     text,
-//     time: new Date().toISOString(),
-//   };
-//   messages.push(msg);
-
-//   clients.forEach((client) =>
-//     client.sendUTF(JSON.stringify({ command: "new-message", message: msg }))
-//   );
-
-//   res.status(201).json(msg);
-// });
+app.get("/", (req, res) => {
+  res.json(messages); // send all messages as JSON
+});
 
 server.listen(PORT, () => {
   console.log(`WebSocket backend running on port ${PORT}`);
