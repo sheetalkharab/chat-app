@@ -42,20 +42,53 @@ function dislikeMessage(index) {
 function renderMessage(msg, index) {
   const div = document.createElement("div");
   div.classList.add("message");
-  div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text} <small>(${new Date(
-    msg.time
-  ).toLocaleTimeString()})</small><br>
-    👍 <span class="like-count">${msg.likes || 0}</span>
-    <button onclick="likeMessage(${index})">Like</button>
-    👎 <span class="dislike-count">${msg.dislikes || 0}</span>
-    <button onclick="dislikeMessage(${index})">Dislike</button>`;
+
+  const userEl = document.createElement("strong");
+  userEl.textContent = `${msg.user}: `;
+
+  const textEl = document.createElement("span");
+  textEl.textContent = msg.text;
+
+  const timeEl = document.createElement("small");
+  timeEl.textContent = ` (${new Date(msg.time).toLocaleTimeString()})`;
+
+  // Like / Dislike section
+  const likeBtn = document.createElement("button");
+  likeBtn.textContent = "Like";
+  likeBtn.onclick = () => likeMessage(index);
+
+  const dislikeBtn = document.createElement("button");
+  dislikeBtn.textContent = "Dislike";
+  dislikeBtn.onclick = () => dislikeMessage(index);
+
+  const likeCount = document.createElement("span");
+  likeCount.classList.add("like-count");
+  likeCount.textContent = msg.likes || 0;
+
+  const dislikeCount = document.createElement("span");
+  dislikeCount.classList.add("dislike-count");
+  dislikeCount.textContent = msg.dislikes || 0;
+
+  div.appendChild(userEl);
+  div.appendChild(textEl);
+  div.appendChild(timeEl);
+  div.appendChild(document.createElement("br"));
+  div.append("👍 ");
+  div.appendChild(likeCount);
+  div.append(" ");
+  div.appendChild(likeBtn);
+
+  div.append(" 👎 ");
+  div.appendChild(dislikeCount);
+  div.append(" ");
+  div.appendChild(dislikeBtn);
   messagesDiv.appendChild(div);
 
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 // Send new message
 function sendMessage() {
-  const user = userName.value || "Anonymous";
+  const user = username.value || "Anonymous";
   const text = newMessage.value.trim();
   if (!text) return alert("Please enter your message");
 
