@@ -2,6 +2,7 @@ const username = document.getElementById("userName");
 const newMessage = document.getElementById("newMessage");
 const messagesDiv = document.getElementById("messages");
 const sendBtn = document.getElementById("enter");
+const userReactions = {};
 
 const ws = new WebSocket(
   "wss://sheetalkharab-websocketchatapp.hosting.codeyourfuture.io"
@@ -32,10 +33,28 @@ ws.onmessage = (event) => {
   }
 };
 function likeMessage(index) {
+  const user = username.value || "Anonymous";
+
+  userReactions[index] = userReactions[index] || [];
+  if (userReactions[index].includes(user)) {
+    alert("You already reacted to this message!");
+    return;
+  }
+
+  userReactions[index].push(user);
   ws.send(JSON.stringify({ command: "like-message", index }));
 }
 
 function dislikeMessage(index) {
+  const user = username.value || "Anonymous";
+
+  userReactions[index] = userReactions[index] || [];
+  if (userReactions[index].includes(user)) {
+    alert("You already reacted to this message!");
+    return;
+  }
+
+  userReactions[index].push(user);
   ws.send(JSON.stringify({ command: "dislike-message", index }));
 }
 
@@ -100,7 +119,6 @@ function sendMessage() {
   );
 
   newMessage.value = "";
-  username.value = "";
 }
 
 sendBtn.addEventListener("click", sendMessage);
